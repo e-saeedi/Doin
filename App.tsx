@@ -1,45 +1,44 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React from "react";
+import { createStaticNavigation } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { View, Text } from "react-native";
+import { Link } from "@react-navigation/native";
+import { Button } from "@react-navigation/elements";
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
 
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
+function  HomeScreen() {
+  return(
+    <View style={{flex:1, alignItems: 'center', justifyContent:'center'}}>
+      <Text>HomeScreen</Text>
+      <Link screen="Details">go to the details</Link>
+      <Button screen="Details">go</Button>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+
+function DetailScreen() {
+  return(
+    <View style={{flex: 1, alignItems: 'center', justifyContent:'center'}}>
+      <Text> detaile page</Text>
+    </View>
+  )
+};
+
+
+const RootStack = createNativeStackNavigator({
+  initialRouteName: 'Home',
+  screens: {
+    Home: {
+      screen: HomeScreen,
+    },
+    Details: DetailScreen,
+  }
 });
 
-export default App;
+const Navigation = createStaticNavigation(RootStack);
+
+export default function App() {
+  return <Navigation />;
+}
