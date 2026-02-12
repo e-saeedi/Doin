@@ -1,44 +1,31 @@
-import React from "react";
-import { createStaticNavigation } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text } from "react-native";
-import { Link } from "@react-navigation/native";
-import { Button } from "@react-navigation/elements";
+import React, { useState } from 'react';
+import { SafeAreaView, Text, StyleSheet } from 'react-native';
+import WelcomeScreen from './src/screens/WelcomeScreen';
+import Navbar from './src/components/Navbar';
 
 
+const App: React.FC = () => {
+  const [showAddTask, setShowAddTask] = useState(false);
 
-function  HomeScreen() {
-  return(
-    <View style={{flex:1, alignItems: 'center', justifyContent:'center'}}>
-      <Text>HomeScreen</Text>
-      <Link screen="Details">go to the details</Link>
-      <Button screen="Details">go</Button>
-    </View>
+  const handleAddTaskPress = () => {
+    // اینجا بعداً Modal یا صفحه AddTask رو می‌خوای باز کنی
+    setShowAddTask(true);
+    console.log("Add Task Pressed!");
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Navbar onAddTaskClick={handleAddTaskPress} />
+      <WelcomeScreen onAddTaskPress={handleAddTaskPress} />
+    </SafeAreaView>
   );
-}
-
-
-function DetailScreen() {
-  return(
-    <View style={{flex: 1, alignItems: 'center', justifyContent:'center'}}>
-      <Text> detaile page</Text>
-    </View>
-  )
 };
 
+export default App;
 
-const RootStack = createNativeStackNavigator({
-  initialRouteName: 'Home',
-  screens: {
-    Home: {
-      screen: HomeScreen,
-    },
-    Details: DetailScreen,
-  }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#121212",
+  },
 });
-
-const Navigation = createStaticNavigation(RootStack);
-
-export default function App() {
-  return <Navigation />;
-}
