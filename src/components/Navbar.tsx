@@ -29,7 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAddTaskClick }) => {
     } else {
       Animated.timing(slideAnim, {
         toValue: -screenWidth,
-        duration: 1500,
+        duration: 1000,
         useNativeDriver: false,
       }).start(() => setMenuOpen(false));
     }
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   title: {
-    color: "white",
+    color: "black",
     fontSize: 20,
     fontWeight: "bold",
   },
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   hamburgerText: {
-    color: "white",
+    color: "black",
     fontSize: 28,
   },
   menu: {
