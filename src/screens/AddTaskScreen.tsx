@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,33 +9,52 @@ import {
 } from 'react-native';
 import { Task } from '../types/Task';
 
-interface addTaskScreenProps {
+interface AddTaskScreenProps {
   navigation: any;
+  onSave: (task: Task) => void;
+  existingTask?: Task; // Optional, برای Edit
 }
 
-const addTaskScreen: React.FC<addTaskScreenProps> = ({ navigation }) => {
-  const [taskName, setTaskName] = useState('');
-  const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState('');
+const AddTaskScreen: React.FC<AddTaskScreenProps> = ({
+  navigation,
+  onSave,
+  existingTask,
+}) => {
+  // State ها با type assertion و fallback برای جلوگیری از undefined
+  const [taskName, setTaskName] = useState<string>(existingTask?.name ?? '');
+  const [description, setDescription] = useState<string>(existingTask?.description ?? '');
+  const [dueDate, setDueDate] = useState<string>(existingTask?.date ?? '');
+
+  // اگر existingTask تغییر کنه، state ها رو بروزرسانی کن
+  useEffect(() => {
+    if (existingTask) {
+      setTaskName(existingTask.name);
+      setDescription(existingTask.description);
+      setDueDate(existingTask.date);
+    }
+  }, [existingTask]);
 
   const handleSave = () => {
     if (!taskName) return;
-    const newTask: Task = {
-      id: Date.now().toString(),
+
+    const task: Task = {
+      id: existingTask?.id ?? Date.now().toString(), // اگر Edit بود همون id
       name: taskName,
       description,
       date: dueDate,
-      status: 'Pending',
+      completed: existingTask?.completed ?? false,
     };
-    console.log('Saved TAsk:', newTask);
-    navigation.goBack();
+
+    onSave(task);
+    navigation.navigate('TaskList');
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.box}>
-        <Text style={styles.title}>Add New Task</Text>
-        <Text style={styles.label}> Task Name </Text>
+        <Text style={styles.title}>{existingTask ? 'Edit Task' : 'Add New Task'}</Text>
+
+        <Text style={styles.label}>Task Name</Text>
         <TextInput
           style={styles.input}
           value={taskName}
@@ -43,6 +62,7 @@ const addTaskScreen: React.FC<addTaskScreenProps> = ({ navigation }) => {
           placeholder="Enter task name"
           placeholderTextColor="#aaa"
         />
+
         <Text style={styles.label}>Description</Text>
         <TextInput
           style={[styles.input, { height: 100 }]}
@@ -63,10 +83,7 @@ const addTaskScreen: React.FC<addTaskScreenProps> = ({ navigation }) => {
         />
 
         <View style={styles.buttonGroup}>
-          <Pressable
-            style={styles.cancelBtn}
-            onPress={() => navigation.goBack()}
-          >
+          <Pressable style={styles.cancelBtn} onPress={() => navigation.goBack()}>
             <Text style={styles.cancelText}>Cancel</Text>
           </Pressable>
 
@@ -79,7 +96,7 @@ const addTaskScreen: React.FC<addTaskScreenProps> = ({ navigation }) => {
   );
 };
 
-export default addTaskScreen;
+export default AddTaskScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -87,24 +104,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#151515',
     justifyContent: 'center',
   },
-
   box: {
     padding: 20,
     backgroundColor: '#b7b7b7',
-    
   },
-
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
   },
-
   label: {
     color: '#151515',
     marginBottom: 5,
   },
-
   input: {
     backgroundColor: '#151515',
     color: 'white',
@@ -112,13 +124,11 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 15,
   },
-
   buttonGroup: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
   },
-
   cancelBtn: {
     backgroundColor: 'white',
     padding: 12,
@@ -127,8 +137,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
     alignItems: 'center',
   },
-  cancelText: { color: '#151515', fontWeight: 'bold' },
-
+  cancelText: {
+    color: '#151515',
+    fontWeight: 'bold',
+  },
   saveBtn: {
     backgroundColor: '#c00',
     padding: 12,
@@ -137,6 +149,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     alignItems: 'center',
   },
-
-  saveText: { color: 'white', fontWeight: 'bold' },
+  saveText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });
