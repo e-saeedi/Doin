@@ -25,12 +25,10 @@ const App: React.FC = () => {
     setTasks(prevTasks => {
       const index = prevTasks.findIndex(t => t.id === task.id);
       if (index !== -1) {
-        // ویرایش تسک
         const newTasks = [...prevTasks];
         newTasks[index] = task;
         return newTasks;
       }
-      // اضافه کردن تسک جدید
       return [...prevTasks, task];
     });
   };
@@ -49,22 +47,40 @@ const App: React.FC = () => {
     <NavigationContainer>
       <SafeAreaView style={styles.container}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {/* Welcome Screen */}
           <Stack.Screen name="Welcome">
             {({ navigation }) => (
               <>
-                <Navbar onAddTaskClick={() => navigation.navigate('AddTask')} />
-                <WelcomeScreen onAddTaskPress={() => navigation.navigate('AddTask')} />
+                <Navbar
+                  onAddTaskClick={() => navigation.navigate('AddTask')}
+                  onHomePageClick={() =>
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Welcome' }],
+                    })
+                  }
+                  onTaskListClick={() => navigation.navigate('TaskList')}
+                />
+                <WelcomeScreen
+                  onAddTaskPress={() => navigation.navigate('AddTask')}
+                />
                 <Footer />
               </>
             )}
           </Stack.Screen>
 
-          {/* Add Task Screen */}
           <Stack.Screen name="AddTask">
             {({ navigation, route }) => (
               <>
-                <Navbar onAddTaskClick={() => navigation.navigate('AddTask')} />
+                <Navbar
+                  onAddTaskClick={() => navigation.navigate('AddTask')}
+                  onHomePageClick={() =>
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Welcome' }],
+                    })
+                  }
+                  onTaskListClick={() => navigation.navigate('TaskList')}
+                />
                 <AddTaskScreen
                   navigation={navigation}
                   onSave={handleSaveTask}
@@ -74,16 +90,26 @@ const App: React.FC = () => {
             )}
           </Stack.Screen>
 
-          {/* Task List Screen */}
           <Stack.Screen name="TaskList">
             {({ navigation }) => (
               <>
-                <Navbar onAddTaskClick={() => navigation.navigate('AddTask')} />
+                <Navbar
+                  onAddTaskClick={() => navigation.navigate('AddTask')}
+                  onHomePageClick={() =>
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Welcome' }],
+                    })
+                  }
+                  onTaskListClick={() => navigation.navigate('TaskList')}
+                />
                 <TaskListScreen
                   tasks={tasks}
                   onDelete={handleDelete}
                   onComplete={handleComplete}
-                  onEdit={task => navigation.navigate('AddTask', { existingTask: task })}
+                  onEdit={task =>
+                    navigation.replace('AddTask', { existingTask: task })
+                  }
                 />
               </>
             )}

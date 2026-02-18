@@ -12,7 +12,7 @@ import { Task } from '../types/Task';
 interface AddTaskScreenProps {
   navigation: any;
   onSave: (task: Task) => void;
-  existingTask?: Task; // Optional, برای Edit
+  existingTask?: Task; 
 }
 
 const AddTaskScreen: React.FC<AddTaskScreenProps> = ({
@@ -20,12 +20,11 @@ const AddTaskScreen: React.FC<AddTaskScreenProps> = ({
   onSave,
   existingTask,
 }) => {
-  // State ها با type assertion و fallback برای جلوگیری از undefined
+
   const [taskName, setTaskName] = useState<string>(existingTask?.name ?? '');
   const [description, setDescription] = useState<string>(existingTask?.description ?? '');
   const [dueDate, setDueDate] = useState<string>(existingTask?.date ?? '');
 
-  // اگر existingTask تغییر کنه، state ها رو بروزرسانی کن
   useEffect(() => {
     if (existingTask) {
       setTaskName(existingTask.name);
@@ -38,7 +37,7 @@ const AddTaskScreen: React.FC<AddTaskScreenProps> = ({
     if (!taskName) return;
 
     const task: Task = {
-      id: existingTask?.id ?? Date.now().toString(), // اگر Edit بود همون id
+      id: existingTask?.id ?? Date.now().toString(), 
       name: taskName,
       description,
       date: dueDate,
@@ -46,7 +45,10 @@ const AddTaskScreen: React.FC<AddTaskScreenProps> = ({
     };
 
     onSave(task);
-    navigation.navigate('TaskList');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'TaskList' }]
+    });
   };
 
   return (
@@ -67,7 +69,7 @@ const AddTaskScreen: React.FC<AddTaskScreenProps> = ({
         <TextInput
           style={[styles.input, { height: 100 }]}
           value={description}
-          onChangeText={setDescription}
+          onChangeText={setDescription} 
           placeholder="Enter description"
           placeholderTextColor="#aaa"
           multiline

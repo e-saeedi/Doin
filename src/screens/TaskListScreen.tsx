@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
 import { Task } from '../types/Task';
 
 interface Props {
@@ -27,27 +21,43 @@ const TaskListScreen: React.FC<Props> = ({
       data={tasks}
       keyExtractor={item => item.id}
       renderItem={({ item }) => (
-        <View style={styles.card}>
-          <Text style={[styles.title, item.completed && styles.completed]}>
-            {item.name}
-          </Text>
-          <Text style={item.completed && styles.completed}>{item.description}</Text>
-          <Text style={item.completed && styles.completed}>{item.date}</Text>
+        <View style={styles.card }>
+          <View style={styles.topRow}>
+            <Text style={[styles.title, item.completed && styles.completed]}>
+              {item.name}
+            </Text>
 
-          <View style={styles.buttons}>
+            <Text style={[styles.desc, item.completed && styles.completed]}>
+              {item.description}
+            </Text>
+          </View>
+
+          <Text style={[styles.date, item.completed && styles.completed]}>
+            {item.date}
+          </Text>
+
+          <View style={styles.bottomRow}>
             <Pressable onPress={() => onEdit(item)} style={styles.editBtn}>
               <Text>Edit</Text>
             </Pressable>
 
-            <Pressable onPress={() => onDelete(item.id)} style={styles.deleteBtn}>
-              <Text>Delete</Text>
-            </Pressable>
-
-            {!item.completed && (
-              <Pressable onPress={() => onComplete(item.id)} style={styles.completeBtn}>
-                <Text>Complete</Text>
+            <View style={styles.rightBtns}>
+              <Pressable
+                onPress={() => onDelete(item.id)}
+                style={styles.deleteBtn}
+              >
+                <Text>Delete</Text>
               </Pressable>
-            )}
+
+              {!item.completed && (
+                <Pressable
+                  onPress={() => onComplete(item.id)}
+                  style={styles.completeBtn}
+                >
+                  <Text>Complete</Text>
+                </Pressable>
+              )}
+            </View>
           </View>
         </View>
       )}
@@ -62,6 +72,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#151515',
     flex: 1,
   },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   card: {
     backgroundColor: '#b7b7b7',
     padding: 15,
@@ -72,14 +87,32 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  desc: {
+    maxWidth: '60%',
+    textAlign: 'right',
+    fontSize: 15,
+  },
+  date: {
+    marginTop: 5,
+  },
   completed: {
     textDecorationLine: 'line-through',
     color: '#555',
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
   },
   buttons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
+  },
+  rightBtns: {
+    flexDirection: 'row',
+    gap: 10,
   },
   editBtn: {
     backgroundColor: '#ccc',

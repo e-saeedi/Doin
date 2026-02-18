@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,17 +6,25 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
-} from "react-native";
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { DrawerActions } from '@react-navigation/native';
 
 interface NavbarProps {
   onAddTaskClick: () => void;
+  onHomePageClick: () => void;
+  onTaskListClick: () => void;
 }
 
-const screenWidth = Dimensions.get("window").width;
+const screenWidth = Dimensions.get('window').width;
 
-const Navbar: React.FC<NavbarProps> = ({ onAddTaskClick }) => {
+const Navbar: React.FC<NavbarProps> = ({
+  onAddTaskClick,
+  onHomePageClick,
+  onTaskListClick,
+}) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const slideAnim = useState(new Animated.Value(-screenWidth))[0]; 
+  const slideAnim = useState(new Animated.Value(-screenWidth))[0];
 
   const toggleMenu = () => {
     if (!menuOpen) {
@@ -34,6 +42,22 @@ const Navbar: React.FC<NavbarProps> = ({ onAddTaskClick }) => {
       }).start(() => setMenuOpen(false));
     }
   };
+// ------------------------------------
+
+
+  const closeMenuAndNavigate = (callback: () => void) => {
+  Animated.timing(slideAnim, {
+    toValue: -screenWidth,
+    duration: 300,
+    useNativeDriver: false,
+  }).start(() => {
+    setMenuOpen(false);
+    callback();
+  });
+};
+// ------------------------------------
+
+
 
   return (
     <>
@@ -46,13 +70,13 @@ const Navbar: React.FC<NavbarProps> = ({ onAddTaskClick }) => {
 
       {menuOpen && (
         <Animated.View style={[styles.menu, { right: slideAnim }]}>
-          <Pressable onPress={toggleMenu} style={styles.menuItem}>
+          <Pressable onPress={() => closeMenuAndNavigate(onHomePageClick)} style={styles.menuItem}>
             <Text style={styles.menuText}>Home</Text>
           </Pressable>
-          <Pressable onPress={onAddTaskClick} style={styles.menuItem}>
+          <Pressable onPress={() => closeMenuAndNavigate(onAddTaskClick)} style={styles.menuItem}>
             <Text style={styles.menuText}>Add Task</Text>
           </Pressable>
-          <Pressable onPress={toggleMenu} style={styles.menuItem}>
+          <Pressable onPress={() => closeMenuAndNavigate(onTaskListClick)} style={styles.menuItem}>
             <Text style={styles.menuText}>Task List</Text>
           </Pressable>
           <Pressable onPress={toggleMenu} style={styles.menuItem}>
@@ -69,30 +93,30 @@ export default Navbar;
 const styles = StyleSheet.create({
   navbar: {
     height: 60,
-    backgroundColor: "#b7b7b7",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    backgroundColor: '#b7b7b7',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
   },
   title: {
-    color: "black",
+    color: 'black',
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   hamburger: {
     padding: 10,
   },
   hamburgerText: {
-    color: "black",
+    color: 'black',
     fontSize: 28,
   },
   menu: {
-    position: "absolute",
+    position: 'absolute',
     top: 60,
     bottom: 0,
-    width: "50%",
-    backgroundColor: "#2b2b2b",
+    width: '50%',
+    backgroundColor: '#2b2b2b',
     paddingTop: 20,
     zIndex: 10,
   },
@@ -100,10 +124,10 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderBottomWidth: 0.5,
-    borderBottomColor: "#444",
+    borderBottomColor: '#444',
   },
   menuText: {
-    color: "white",
+    color: 'white',
     fontSize: 18,
   },
 });
